@@ -1,6 +1,6 @@
 | **Authors**  | **Project** |
 |:------------:|:-----------:|
-|   N. Curti  :|:  Genetic  :|
+|   N. Curti   |   Genetic   |
 
 # Genetic algorithm
 
