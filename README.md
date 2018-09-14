@@ -4,16 +4,16 @@
 
 # Genetic algorithm
 
-Examples about genetic algorithms for parallel and distributed computing.
+Examples of genetic algorithm applications in parallel and distributed enironment.
 
-1. [Prerequisites](#Prerequisites)
-2. [Installation](#Installation)
-3. [Authors](#Authors)
-4. [License](#License)
+1. [Prerequisites](#prerequisites)
+2. [Installation](#installation)
+3. [Authors](#authors)
+4. [License](#license)
 
 ## Prerequisites
 
-This project collects examples about genetic algorithms application to very simple problems.
+This project collects examples of genetic algorithm applications to very simple problems.
 The codes are written in c++ language with the support of **c++14 standard**.
 Before install it, please upgrade your c++ compiler version to a compatible one (ex. version >= 5 for g++ compiler).
 
