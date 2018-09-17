@@ -25,7 +25,7 @@ For the MPI compiler must be set the variable OMPI_CXX.
 
 ## Installation
 
-To build the executables, clone the repo and the type
+To build the executables, clone the repo and then type
 
 ```
 make omp
