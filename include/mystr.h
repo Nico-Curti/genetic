@@ -63,7 +63,7 @@ struct mystring
   mystring operator+(const mystring &s)
   {
     int pos = std::rand() % LENGTH;
-    return this->str.substr(0, pos) + s.str.substr(pos, LENGTH - pos);
+    return this->str.substr(0, pos) + s.str.substr(pos, LENGTH);
   }
   // mutation function
   void operator!(void)

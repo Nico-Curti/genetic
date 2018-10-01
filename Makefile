@@ -11,7 +11,7 @@ RESET  := $(shell tput -Txterm sgr0   )
 #                         COMPILE OPTIONS                       #
 #################################################################
 
-OMP     := 0
+OMP     := 1
 MPI     := 1
 
 STD    := -std=c++14
@@ -69,12 +69,13 @@ all: help
 #                         MAIN RULES                            #
 #################################################################
 
-omp: outdir             ##@examples Compile the omp version of the genetic algorithm
+
+omp: | $(OUT_DIR) check-omp   				 ##@examples Compile the omp version of the genetic algorithm
 		@printf "%-80s " "Compiling genetic algorithm omp version ..."
-		@$(CXX) $(LDFLAGS) $(CFLAGS) $(SRC_DIR)/omp_gen.cpp -o $(OUT_DIR)/omp_gen
+		@$(CXX) $(CFLAGS) $(SRC_DIR)/omp_gen.cpp -o $(OUT_DIR)/omp_gen
 		@printf "[done]\n"
 
-mpi: outdir             ##@examples Compile the mpi version of the genetic algorithm
+mpi: | $(OUT_DIR) check-mpi check-omp  ##@examples Compile the mpi version of the genetic algorithm
 		@printf "%-80s " "Compiling genetic algorithm mpi version ..."
 		@$(OMPI_CXX) $(LDFLAGS) $(CFLAGS) $(MPI_OPTS) $(SRC_DIR)/boost_mpi_gen.cpp -o $(OUT_DIR)/mpi_gen
 		@printf "[done]\n"
@@ -99,11 +100,22 @@ HELP_FUN = \
 		}; \
 		print "\n"; }
 
-help:                   ##@utils Show this help message.
+help:                   				##@utils Show this help message.
 		@perl -e '$(HELP_FUN)' $(MAKEFILE_LIST)
 
-outdir: $(OUT_DIR)      ##@utils Make output (executables) directory.
+$(OUT_DIR):             				##@utils Make output (executables) directory.
 		@printf "%-80s " "Creating output directory ..."
 		@$(mkdir_out)
 		@printf "[done]\n"
 
+
+check-omp:
+		@if test "$(OMP)" = "0" ; then \
+        echo "${YELLOW}Warning! OMP not set!${RESET}"; \
+    fi;
+
+check-mpi:
+		@if test "$(MPI)" = "0"; then \
+				echo "${RED}Error! MPI not set!${RESET}"; \
+				exit 1; \
+		fi;
