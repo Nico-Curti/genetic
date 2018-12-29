@@ -31,7 +31,6 @@ const std::size_t LENGTH = TARGET.size();
 #include <merge_sort.h>
 #endif
 
-static constexpr int root        = 0;
 static constexpr int rng_seed    = 123;
 static constexpr float inf       = std::numeric_limits<float>::infinity();
 static constexpr float fit_limit = 0.f;

@@ -266,7 +266,15 @@ void slave(boost::mpi::communicator &world, const int &pID,
     {
 #endif
     world.recv(root, tag_stop, stop);
+#ifdef _OPENMP
+    }
+#endif
+
     if (stop) break;
+
+#ifdef _OPENMP
+    {
+#endif
     world.recv(root, tag_pop, population.get(), n_population);
 #ifdef _OPENMP
     }

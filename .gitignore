@@ -32,4 +32,5 @@
 *.app
 
 # Directories
-bin/
+[Bb]in/
+[Bb]uild/
