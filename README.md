@@ -1,5 +1,5 @@
 | **Authors**  | **Project** | **Build Status**              |
-|:------------:|:-----------:||:----------------------------:|
+|:------------:|:-----------:|:----------------------------:|
 |   N. Curti   |   Genetic   | **Linux/MacOS** : *miss*      |
 
 [![GitHub pull-requests](https://img.shields.io/github/issues-pr/Nico-Curti/genetic.svg?style=plastic)](https://github.com/Nico-Curti/genetic/pulls)
