@@ -136,7 +136,7 @@ endif()
 #                          INSTALLERS                           #
 #################################################################
 
-install(TARGETS ${gen_omp}         DESTINATION ${CMAKE_SOURCE_DIR}/${OUT_DIR})
+install(TARGETS omp_gen    DESTINATION ${CMAKE_SOURCE_DIR}/${OUT_DIR})
 if (MPI)
-  install(TARGETS ${gen_mpi}       DESTINATION ${CMAKE_SOURCE_DIR}/${OUT_DIR})
+  install(TARGETS mpi_gen  DESTINATION ${CMAKE_SOURCE_DIR}/${OUT_DIR})
 endif()
