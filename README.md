@@ -1,6 +1,12 @@
-| **Authors**  | **Project** |
-|:------------:|:-----------:|
-|   N. Curti   |   Genetic   |
+| **Authors**  | **Project** | **Build Status**              |
+|:------------:|:-----------:||:----------------------------:|
+|   N. Curti   |   Genetic   | **Linux/MacOS** : *miss*      |
+
+[![GitHub pull-requests](https://img.shields.io/github/issues-pr/Nico-Curti/genetic.svg?style=plastic)](https://github.com/Nico-Curti/genetic/pulls)
+[![GitHub issues](https://img.shields.io/github/issues/Nico-Curti/genetic.svg?style=plastic)](https://github.com/Nico-Curti/genetic/issues)
+
+[![GitHub stars](https://img.shields.io/github/stars/Nico-Curti/genetic.svg?label=Stars&style=social)](https://github.com/Nico-Curti/genetic/stargazers)
+[![GitHub watchers](https://img.shields.io/github/watchers/Nico-Curti/genetic.svg?label=Watch&style=social)](https://github.com/Nico-Curti/genetic/watchers)
 
 # Genetic algorithm
 
@@ -40,7 +46,6 @@ make mpi
 for the message-passing version.
 
 If in the Makefile the variable OMP is set to **true** you can enable multi-threading also for the mpi code (**hybrid version**).
-
 
 ## Authors
 

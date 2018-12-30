@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 3.8.2)
-project (Genetic LANGUAGES CXX VERSION 2.0.1 DESCRIPTION "Genetic algorithm in parallel and distributed computing")
+project (Genetic LANGUAGES CXX VERSION 1.0.0 DESCRIPTION "Genetic algorithm in parallel and distributed computing")
 set (CMAKE_CXX_STANDARD 14)
 set (CMAKE_CXX_STANDARD_REQUIRED ON)
 
