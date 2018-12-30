@@ -81,6 +81,7 @@ endif()
 
 set(SRC_DIR    ./src)
 set(INC_DIR    ./include)
+set(OUT_DIR    ./bin)
 
 file(GLOB SRC    "${SRC_DIR}/*.cpp")
 file(GLOB HEADER "${INC_DIR}/*.h"  )
