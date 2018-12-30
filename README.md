@@ -1,6 +1,6 @@
 | **Authors**  | **Project** | **Build Status**              |
-|:------------:|:-----------:|:----------------------------:|
-|   N. Curti   |   Genetic   | **Linux/MacOS** : *miss*      |
+|:------------:|:-----------:|:-----------------------------:|
+|   N. Curti   |   Genetic   | **Linux/MacOS** : [![Travis](https://travis-ci.com/Nico-Curti/genetic.svg?branch=master)](https://travis-ci.com/Nico-Curti/genetic)     |
 
 [![GitHub pull-requests](https://img.shields.io/github/issues-pr/Nico-Curti/genetic.svg?style=plastic)](https://github.com/Nico-Curti/genetic/pulls)
 [![GitHub issues](https://img.shields.io/github/issues/Nico-Curti/genetic.svg?style=plastic)](https://github.com/Nico-Curti/genetic/issues)
