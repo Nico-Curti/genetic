@@ -55,7 +55,7 @@ install:
   - if [[ "$BUILD" == "osx-clang" ]]; then ${CXX} --version                                                                              ;fi
 
   - if [[ "$BUILD" == "osx-clang" ]]; then brew install openmpi                                                                          ;fi
-  - if [[ "$BUILD" == "osx-clang" ]]; then brew upgrade boost                                                                            ;fi
+  - if [[ "$BUILD" == "osx-clang" ]]; then brew install boost-mpi                                                                        ;fi
   ###############################################################################################################################################
 
   # Link gcc-7 and g++-7 to their standard commands
