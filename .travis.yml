@@ -57,8 +57,8 @@ install:
   # Install MPI
   - if [[ "$BUILD" == "linux-gcc" ]]; then sudo apt-get install -y gfortran                                                              ;fi
   - if [[ "$BUILD" == "linux-gcc" ]]; then wget --no-check-certificate https://www.open-mpi.org/software/ompi/v3.0/downloads/openmpi-3.0.0.tar.gz ;fi
-  - if [[ "$BUILD" == "linux-gcc" ]]; then tar -zxf $OMPIVER.tar.gz                                                                      ;fi
-  - if [[ "$BUILD" == "linux-gcc" ]]; then cd $OMPIVER                                                                                   ;fi
+  - if [[ "$BUILD" == "linux-gcc" ]]; then tar -zxf openmpi-3.0.0.tar.gz                                                                 ;fi
+  - if [[ "$BUILD" == "linux-gcc" ]]; then cd openmpi-3.0.0                                                                              ;fi
   - if [[ "$BUILD" == "linux-gcc" ]]; then sh ./configure --prefix=$HOME/OpenMPI > /dev/null                                             ;fi
   - if [[ "$BUILD" == "linux-gcc" ]]; then make -j > /dev/null                                                                           ;fi
   - if [[ "$BUILD" == "linux-gcc" ]]; then sudo make install > /dev/null                                                                 ;fi
