@@ -21,6 +21,15 @@ CFLAGS := -Wall -Wextra -Wno-unused-result
 #                         PARSE OPTIONS                         #
 #################################################################
 
+ifneq ($(STD), -std=c++14)
+$(error $(RED)C++ minimum standard required is c++14$(RESET))
+endif
+
+omp_check := $(shell echo |cpp -fopenmp -dM | grep -i open | cut -d' ' -f 3)
+ifneq ($(shell expr $(omp_check) \>= 201307), 1)
+$(error $(RED)Your OpenMP is too old. Required OpenMP 4.0. Please upgrade.$(RESET))
+endif
+
 define config
 	$(if $(filter $(1), $(2)), $(3), $(4) )
 endef
@@ -31,9 +40,6 @@ LDFLAGS  += $(strip $(call config, $(MPI),     1, -lboost_mpi -lboost_serializat
 OPTS     := $(strip $(call config, $(DEBUG),   1, -O0 -g -DDEBUG, -O3 -mavx))
 MPI_OPTS := $(strip $(call config, $(MPI),     1, -D_MPI, ))
 
-ifneq ($(STD), -std=c++14)
-$(error $(RED)C++ minimum standard required is c++14$(RESET))
-endif
 
 #################################################################
 #                         SETTING DIRECTORIES                   #
