@@ -59,9 +59,10 @@ install:
   - if [[ "$BUILD" == "linux-gcc" ]]; then wget --no-check-certificate https://www.open-mpi.org/software/ompi/v3.0/downloads/openmpi-3.0.0.tar.gz ;fi
   - if [[ "$BUILD" == "linux-gcc" ]]; then tar -zxf openmpi-3.0.0.tar.gz                                                                 ;fi
   - if [[ "$BUILD" == "linux-gcc" ]]; then cd openmpi-3.0.0                                                                              ;fi
-  - if [[ "$BUILD" == "linux-gcc" ]]; then sh ./configure --prefix=$HOME/OpenMPI > /dev/null                                             ;fi
-  - if [[ "$BUILD" == "linux-gcc" ]]; then make -j > /dev/null                                                                           ;fi
-  - if [[ "$BUILD" == "linux-gcc" ]]; then sudo make install > /dev/null                                                                 ;fi
+  - if [[ "$BUILD" == "linux-gcc" ]]; then sh ./configure --prefix=$HOME/OpenMPI                                                         ;fi
+  - if [[ "$BUILD" == "linux-gcc" ]]; then make -j                                                                                       ;fi
+  - if [[ "$BUILD" == "linux-gcc" ]]; then sudo make install                                                                             ;fi
+  - if [[ "$BUILD" == "linux-gcc" ]]; then cd ..                                                                                         ;fi
 
   - if [[ "$BUILD" == "osx-clang" ]]; then brew install openmpi                                                                          ;fi
   ###############################################################################################################################################
@@ -80,7 +81,7 @@ before_script:
   - cd build
   - cmake --version
   - if [[ "$BUILD" == "linux-gcc" ]]; then cmake -G "Ninja" "-DCMAKE_BUILD_TYPE=Debug" "-DOMP=ON" "-DMPI=ON" ..                          ;fi
-  - if [[ "$BUILD" == "osx-clang" ]]; then cmake "-DCMAKE_BUILD_TYPE=Debug" "-DOMP=OFF" "-DMPI=ON"..                                     ;fi
+  - if [[ "$BUILD" == "osx-clang" ]]; then cmake "-DCMAKE_BUILD_TYPE=Debug" "-DOMP=OFF" "-DMPI=ON" ..                                    ;fi
 
 script:
   - cmake --build .
