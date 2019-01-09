@@ -32,7 +32,7 @@ matrix:
 
 before_install:
   - pip install --user codecov
-
+  - if [[ "$BUILD" == "linux-gcc" ]]; then sudo apt-get install libboost-all-dev libopenmpi-dev                                          ;fi
   - if [[ "$BUILD" == "osx-clang" ]]; then wget --no-check-certificate https://cmake.org/files/v3.13/cmake-3.13.1-Darwin-x86_64.tar.gz   ;fi
   - if [[ "$BUILD" == "osx-clang" ]]; then tar -xzf cmake-3.13.1-Darwin-x86_64.tar.gz                                                    ;fi
   - if [[ "$BUILD" == "osx-clang" ]]; then export PATH=$PWD/cmake-3.13.1-Darwin-x86_64/CMake.app/Contents/bin:$PATH                      ;fi
@@ -53,18 +53,8 @@ install:
   - if [[ "$BUILD" == "osx-clang" ]]; then export CMAKE_CXX_COMPILER=${CXX}                                                              ;fi
   - if [[ "$BUILD" == "osx-clang" ]]; then export CMAKE_LINKER=clang++-7                                                                 ;fi
   - if [[ "$BUILD" == "osx-clang" ]]; then ${CXX} --version                                                                              ;fi
-  ###############################################################################################################################################
-  # Install MPI
-  - if [[ "$BUILD" == "linux-gcc" ]]; then sudo apt-get install -y gfortran                                                              ;fi
-  - if [[ "$BUILD" == "linux-gcc" ]]; then wget --no-check-certificate https://www.open-mpi.org/software/ompi/v3.0/downloads/openmpi-3.0.0.tar.gz ;fi
-  - if [[ "$BUILD" == "linux-gcc" ]]; then tar -zxf openmpi-3.0.0.tar.gz                                                                 ;fi
-  - if [[ "$BUILD" == "linux-gcc" ]]; then cd openmpi-3.0.0                                                                              ;fi
-  - if [[ "$BUILD" == "linux-gcc" ]]; then sh ./configure --prefix=$HOME/OpenMPI                                                         ;fi
-  - if [[ "$BUILD" == "linux-gcc" ]]; then make -j                                                                                       ;fi
-  - if [[ "$BUILD" == "linux-gcc" ]]; then sudo make install                                                                             ;fi
-  - if [[ "$BUILD" == "linux-gcc" ]]; then cd ..                                                                                         ;fi
 
-  - if [[ "$BUILD" == "osx-clang" ]]; then brew install openmpi                                                                          ;fi
+  - if [[ "$BUILD" == "osx-clang" ]]; then brew install openmpi boost                                                                    ;fi
   ###############################################################################################################################################
 
   # Link gcc-7 and g++-7 to their standard commands
