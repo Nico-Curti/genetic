@@ -225,8 +225,13 @@ matrix:
             - llvm-toolchain-trusty-7
           packages:
             - clang-7.0
+            - libstdc++6-4.6-dev
+            - llvm-7-dev
+            - libclang-7-dev
+            - libc++-dev
+            - libc++abi-dev
       env:
-        - MATRIX_EVAL="CXX=clang++-7"
+        - MATRIX_EVAL="CC=clang-7 && CXX=clang++-7"
         - LINKER_FLAGS="-stdlib=libc++ -lc++abi"
         - CXXFLAGS="-stdlib=libc++"
         - COMPILER_ID="clang"
@@ -243,7 +248,7 @@ matrix:
         - COMPILER_ID="clang"
         - BUILD=osx-clang
 
-allow_failures:
+  allow_failures:
     - name: ubuntu 14.04 - clang@3.6
     - name: ubuntu 14.04 - clang@3.8
     - name: ubuntu 14.04 - clang@3.9
