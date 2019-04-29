@@ -107,9 +107,6 @@ before_install:
 install:
   - if [[ "$BUILD" == "osx-clang" ]]; then brew update                                                                                   ;fi
   - if [[ "$BUILD" == "osx-clang" ]]; then brew install llvm                                                                             ;fi
-  - if [[ "$BUILD" == "osx-clang" ]]; then brew install ninja                                                                            ;fi
-  #- if [[ "$BUILD" == "osx-clang" ]]; then export CC=/usr/local/bin/clang-7                                                              ;fi
-  #- if [[ "$BUILD" == "osx-clang" ]]; then export CXX=/usr/local/bin/clang-7                                                             ;fi
   - if [[ "$BUILD" == "osx-clang" ]]; then export CMAKE_C_COMPILER=${CC}                                                                 ;fi
   - if [[ "$BUILD" == "osx-clang" ]]; then export CMAKE_CXX_COMPILER=${CXX}                                                              ;fi
   - if [[ "$BUILD" == "osx-clang" ]]; then export CMAKE_LINKER=clang++-7                                                                 ;fi
@@ -118,16 +115,6 @@ install:
   - if [[ "$BUILD" == "osx-clang" ]]; then brew install openmpi                                                                          ;fi
   - if [[ "$BUILD" == "osx-clang" ]]; then brew install boost-mpi                                                                        ;fi
   ###############################################################################################################################################
-
-  # Link gcc-7 and g++-7 to their standard commands
-  - if [[ "$BUILD" == "linux-gcc" ]]; then sudo ln -s /usr/bin/gcc-8 /usr/local/bin/gcc                                                  ;fi
-  - if [[ "$BUILD" == "linux-gcc" ]]; then sudo ln -s /usr/bin/g++-8 /usr/local/bin/g++                                                  ;fi
-  # Export CC and CXX to tell cmake which compiler to use
-  - if [[ "$BUILD" == "linux-gcc" ]]; then export CC=/usr/bin/gcc-8                                                                      ;fi
-  - if [[ "$BUILD" == "linux-gcc" ]]; then export CXX=/usr/bin/g++-8                                                                     ;fi
-  # Check versions of gcc, g++ and cmake
-  - if [[ "$BUILD" == "linux-gcc" ]]; then gcc -v && g++ -v && cmake --version                                                           ;fi
-
 before_script:
   - mkdir build
   - cd build
