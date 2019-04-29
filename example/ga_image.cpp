@@ -42,17 +42,20 @@ int main()
   std :: srand(rng_seed);
   image target(filename);
 
-  auto best_im = ga_omp <_single> (target,
-                                   50,        // number of dna
-                                   2000,      // max number of iterations
-                                   fitness,   // fitness function as anonymous struct operator
-                                   .1f,       // percentage of population to conserve
-                                   .3f,       // probability of mutation
-                                   rng_seed,  // random seed
-                                   nth);
+  auto best_im = ga_omp<_single>(target,
+                                 50,      // number of dna
+                                 15000,     // max number of iterations
+                                 fitness,  // fitness function as anonymous struct operator
+                                 1,        // number of mutations
+                                 .1f,      // percentage of population to conserve
+                                 .3f,      // probability of mutation
+                                 rng_seed, // random seed
+                                 nth       // number of threads
+                                 );
 
   best_im._w = target._w;
   best_im._h = target._h;
+  best_im.show();
   best_im.save("prova.jpg");
 
   return 0;

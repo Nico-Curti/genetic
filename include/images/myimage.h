@@ -72,7 +72,7 @@ __unused struct
                               {
                                 return (static_cast < float >(i) - static_cast < float >(j)) *
                                        (static_cast < float >(i) - static_cast < float >(j));
-                              });
+                              }) / a.size();
   }
 } fitness;
 

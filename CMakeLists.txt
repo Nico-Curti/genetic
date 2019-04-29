@@ -100,6 +100,10 @@ endif()
 #                         PARSE OPTIONS                         #
 #################################################################
 
+# Required for progress.h full version
+find_package(Threads REQUIRED)
+list(APPEND linked_libs Threads::Threads )
+
 if (OMP)
   find_package(OpenMP REQUIRED)
   if (OPENMP_FOUND)
@@ -193,18 +197,17 @@ message(STATUS ""                                                               
 add_library(${geneticlib} SHARED ${SRC} ${HEADER})
 set_property(TARGET ${geneticlib} PROPERTY POSITION_INDEPENDENT_CODE ON)
 if (MPI)
-  target_link_libraries(${geneticlib} PRIVATE ${linked_libs} ${MPI_CXX_LIBRARIES} ${Boost_LIBRARIES})
-target_compile_definitions(${geneticlib} PUBLIC -D_MPI)
+  target_compile_definitions(${geneticlib} PUBLIC -D_MPI)
 endif()
-target_link_libraries(${geneticlib} ${linked_libs})
+target_link_libraries(${geneticlib} ${linked_libs} ${MPI_CXX_LIBRARIES} ${Boost_LIBRARIES}) # necessary for only one lib!
 
 # omp
 add_custom_target(gen_omp)
 add_executable(omp_gen ${EXAMPLE}/omp_gen.cpp)
-target_link_libraries(omp_gen ${linked_libs} ${geneticlib})
 if (MPI)
-  target_link_libraries(omp_gen ${MPI_CXX_LIBRARIES} ${Boost_LIBRARIES}) # necessary for only one lib!
+  target_compile_definitions(${geneticlib} PUBLIC -D_MPI)
 endif()
+target_link_libraries(omp_gen ${linked_libs} ${geneticlib} ${MPI_CXX_LIBRARIES} ${Boost_LIBRARIES}) # necessary for only one lib!
 add_dependencies(gen_omp omp_gen)
 
 if (MPI)

@@ -46,6 +46,7 @@ MPI_OPTS := $(strip $(call config, $(MPI),     1, -D_MPI, ))
 IM_OPTS  := $(strip $(call config, $(IMAGE),   1, -D__images__, ))
 
 OCVFLAGS := `pkg-config --libs opencv`
+LDFLAGS  += -pthread
 
 #################################################################
 #                         SETTING DIRECTORIES                   #
@@ -101,17 +102,17 @@ all: help
 
 omp: | $(OBJS) $(OUT_DIR) check-omp   				   ##@examples Compile the omp version of the genetic algorithm
 		@printf "%-80s " "Compiling genetic algorithm omp version ..."
-		@$(CXX) $(OBJS) $(CFLAGS) $(EXAMPLE)/omp_gen.cpp -o $(OUT_DIR)/omp_gen -pthread $(OCVFLAGS)
+		@$(CXX) $(OBJS) $(CFLAGS) $(EXAMPLE)/omp_gen.cpp -o $(OUT_DIR)/omp_gen $(OCVFLAGS)
 		@printf "[done]\n"
 
 image: | $(OBJS) $(OUT_DIR) check-omp   				 ##@examples Compile the omp version of the image genetic algorithm
 		@printf "%-80s " "Compiling genetic algorithm image omp version ..."
-		@$(CXX) $(OBJS) $(CFLAGS) $(EXAMPLE)/ga_image.cpp -o $(OUT_DIR)/ga_image -pthread $(OCVFLAGS) -D__images__
+		@$(CXX) $(OBJS) $(CFLAGS) $(EXAMPLE)/ga_image.cpp -o $(OUT_DIR)/ga_image $(OCVFLAGS) -D__images__
 		@printf "[done]\n"
 
 mpi: | $(OBJS) $(OUT_DIR) check-mpi check-omp    ##@examples Compile the mpi version of the genetic algorithm
 		@printf "%-80s " "Compiling genetic algorithm mpi version ..."
-		@$(OMPI_CXX) $(LDFLAGS) $(OBJS) $(CFLAGS) $(MPI_OPTS) $(EXAMPLE)/boost_mpi_gen.cpp -o $(OUT_DIR)/mpi_gen -pthread $(OCVFLAGS)
+		@$(OMPI_CXX) $(LDFLAGS) $(OBJS) $(CFLAGS) $(MPI_OPTS) $(EXAMPLE)/boost_mpi_gen.cpp -o $(OUT_DIR)/mpi_gen $(OCVFLAGS)
 		@printf "[done]\n"
 
 #################################################################

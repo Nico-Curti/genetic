@@ -65,6 +65,156 @@ matrix:
         - COMPILER_ID="gcc"
         - BUILD=linux-gcc
 
+# linux + clang
+
+    - os: linux
+      compiler: clang
+      name: ubuntu 14.04 - clang@3.6
+      addons:
+        apt:
+          update: true
+          packages:
+            - clang-3.6
+            - libstdc++-4.8-dev
+            - llvm-3.9-dev
+            - libclang-3.9-dev
+            - libc++-dev
+            - libc++abi-dev
+      env:
+        - MATRIX_EVAL="CC=clang-3.6 && CXX=clang++-3.6"
+        - CMAKE_C_COMPILER=${CC}
+        - CMAKE_CXX_COMPILER=${CXX}
+        - CMAKE_LINKER=${CXX}
+        - COMPILER_ID="clang"
+        - LLVM_VERSION=3.9.0
+        - LINKER_FLAGS="-stdlib=libstdc++ -lc++abi"
+        - BUILD=linux-gcc
+
+    - os: linux
+      compiler: clang
+      name: ubuntu 14.04 - clang@3.8
+      addons:
+        apt:
+          update: true
+          sources:
+            - llvm-toolchain-precise-3.8
+          packages:
+            - clang-3.8
+            - libstdc++-4.8-dev
+            - llvm-3.9-dev
+            - libclang-3.9-dev
+            - libc++-dev
+            - libc++abi-dev
+      env:
+        - MATRIX_EVAL="CC=clang-3.8 && CXX=clang++-3.8"
+        - CMAKE_C_COMPILER=${CC}
+        - CMAKE_CXX_COMPILER=${CXX}
+        - CMAKE_LINKER=${CXX}
+        - COMPILER_ID="clang"
+        - LLVM_VERSION=3.9.0
+        - LINKER_FLAGS="-stdlib=libstdc++ -lc++abi"
+        - BUILD=linux-gcc
+
+    - os: linux
+      compiler: clang
+      name: ubuntu 14.04 - clang@3.9
+      addons:
+        apt:
+          update: true
+          sources:
+            - llvm-toolchain-trusty-3.9
+          packages:
+            - clang-3.9
+            - libstdc++-4.8-dev
+            - llvm-3.9-dev
+            - libclang-3.9-dev
+            - libc++-dev
+            - libc++abi-dev
+      env:
+        - MATRIX_EVAL="CC=clang-3.9 && CXX=clang++-3.9"
+        - CMAKE_C_COMPILER=${CC}
+        - CMAKE_CXX_COMPILER=${CXX}
+        - CMAKE_LINKER=${CXX}
+        - COMPILER_ID="clang"
+        - LLVM_VERSION=3.9.0
+        - LINKER_FLAGS="-stdlib=libstdc++ -lc++abi"
+        - BUILD=linux-gcc
+
+    - os: linux
+      compiler: clang
+      name: ubuntu 14.04 - clang@4.0
+      addons:
+        apt:
+          update: true
+          sources:
+            - llvm-toolchain-trusty-4.0
+          packages:
+            - clang-4.0
+            - libstdc++-4.8-dev
+            - llvm-4.0-dev
+            - libclang-4.0-dev
+            - libc++-dev
+            - libc++abi-dev
+      env:
+        - MATRIX_EVAL="CC=clang-4.0 && CXX=clang++-4.0"
+        - CMAKE_C_COMPILER=${CC}
+        - CMAKE_CXX_COMPILER=${CXX}
+        - CMAKE_LINKER=${CXX}
+        - COMPILER_ID="clang"
+        - LLVM_VERSION=4.0.0
+        - BUILD=linux-gcc
+
+    - os: linux
+      compiler: clang
+      name: ubuntu 14.04 - clang@5.0
+      addons:
+        apt:
+          update: true
+          sources:
+            - llvm-toolchain-trusty-5.0
+          packages:
+            - clang-5.0
+            - libstdc++-4.8-dev
+            - llvm-5.0-dev
+            - libclang-5.0-dev
+            - libc++-dev
+            - libc++abi-dev
+
+      env:
+        - MATRIX_EVAL="CC=clang-5.0 && CXX=clang++-5.0"
+        - CMAKE_C_COMPILER=${CC}
+        - CMAKE_CXX_COMPILER=${CXX}
+        - CMAKE_LINKER=${CXX}
+        - COMPILER_ID="clang"
+        - LLVM_VERSION=5.0.0
+        - BUILD=linux-gcc
+
+    - os: linux
+      compiler: clang
+      name: ubuntu 14.04 - clang@6.0
+      addons:
+        apt:
+          update: true
+          sources:
+            - llvm-toolchain-trusty-6.0
+            - sourceline: 'ppa:ubuntu-toolchain-r/test'
+          packages:
+            - clang-6.0
+            - libstdc++6-4.4-dev
+            - llvm-6.0
+            - libclang-6.0-dev
+            - libc++-dev
+            - libc++abi-dev
+
+      env:
+        - MATRIX_EVAL="CC=clang-6.0 && CXX=clang++-6.0"
+        - CMAKE_C_COMPILER=${CC}
+        - CMAKE_CXX_COMPILER=${CXX}
+        - CMAKE_LINKER=${CXX}
+        - COMPILER_ID="clang"
+        - LLVM_VERSION=6.0.0
+        - BUILD=linux-gcc
+
 # osx + clang
     - os: osx
       compiler: clang
@@ -92,6 +242,7 @@ matrix:
         - BUILD=osx-clang
 
 before_install:
+  - travis_retry eval "${MATRIX_EVAL}"
   - pip install --user codecov
   - if [[ "$BUILD" == "linux-gcc" ]]; then sudo apt-get install libboost-all-dev libopenmpi-dev                                          ;fi
   - if [[ "$BUILD" == "osx-clang" ]]; then wget --no-check-certificate https://cmake.org/files/v3.13/cmake-3.13.1-Darwin-x86_64.tar.gz   ;fi
@@ -107,10 +258,7 @@ before_install:
 install:
   - if [[ "$BUILD" == "osx-clang" ]]; then brew update                                                                                   ;fi
   - if [[ "$BUILD" == "osx-clang" ]]; then brew install llvm                                                                             ;fi
-  - export CMAKE_C_COMPILER=${CC}
-  - export CMAKE_CXX_COMPILER=${CXX}
   - if [[ "$BUILD" == "osx-clang" ]]; then export CMAKE_LINKER=clang++-7                                                                 ;fi
-  - if [[ "$BUILD" == "osx-clang" ]]; then ${CXX} --version                                                                              ;fi
 
   - if [[ "$BUILD" == "osx-clang" ]]; then brew install openmpi                                                                          ;fi
   - if [[ "$BUILD" == "osx-clang" ]]; then brew install boost-mpi                                                                        ;fi
@@ -118,11 +266,9 @@ install:
 before_script:
   - mkdir build
   - cd build
-  - if [[ "$BUILD" == "linux-gcc" ]]; then cmake "-DCMAKE_BUILD_TYPE=Debug" "-DOMP=ON" "-DMPI=ON" ..                                     ;fi
-  - if [[ "$BUILD" == "osx-clang" ]]; then cmake "-DCMAKE_BUILD_TYPE=Debug" "-DOMP=OFF" "-DMPI=ON" ..                                    ;fi
+  - if [[ "$BUILD" == "linux-gcc" ]]; then cmake .. "-DCMAKE_BUILD_TYPE=Debug" "-DOMP=ON"  "-DMPI=ON"                                    ;fi
+  - if [[ "$BUILD" == "osx-clang" ]]; then cmake .. "-DCMAKE_BUILD_TYPE=Debug" "-DOMP=OFF" "-DMPI=ON"                                    ;fi
 
 script:
   - cmake --build .
 
-after_success:
-  - codecov --file coverage/lcov.info --disable search

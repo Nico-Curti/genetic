@@ -176,7 +176,7 @@ genome ga_omp(const genome & target, const std :: size_t & n_population, const s
 
 template < int cross_t, typename genome, typename Func >
 genome brkga_omp(const genome & target, const int & n_population, const std :: size_t & max_iter, Func fit,
-               int elit_percentage,
+               float elit_percentage,
                float mutant_percentage,
                std :: size_t seed,
                __unused int nth)
