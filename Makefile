@@ -11,11 +11,13 @@ RESET  := $(shell tput -Txterm sgr0   )
 #                         COMPILE OPTIONS                       #
 #################################################################
 
-OMP     := 1
-MPI     := 1
+OMP     := 0
+MPI     := 0
+VERBOSE := 1
+IMAGE   := 0
 
 STD    := -std=c++14
-CFLAGS := -Wall -Wextra -Wno-unused-result
+CFLAGS := -Wall -Wextra -Wno-unused-result -Wpedantic
 
 #################################################################
 #                         PARSE OPTIONS                         #
@@ -35,11 +37,15 @@ define config
 endef
 
 CFLAGS   += $(strip $(call config, $(OMP),     1, -fopenmp, ))
+CFLAGS   += $(strip $(call config, $(VERBOSE), 1, -DVERBOSE, ))
 LDFLAGS  += $(strip $(call config, $(MPI),     1, -lboost_mpi -lboost_serialization, ))
 
 OPTS     := $(strip $(call config, $(DEBUG),   1, -O0 -g -DDEBUG, -O3 -mavx))
 MPI_OPTS := $(strip $(call config, $(MPI),     1, -D_MPI, ))
 
+IM_OPTS  := $(strip $(call config, $(IMAGE),   1, -D__images__, ))
+
+OCVFLAGS := `pkg-config --libs opencv`
 
 #################################################################
 #                         SETTING DIRECTORIES                   #
@@ -47,9 +53,24 @@ MPI_OPTS := $(strip $(call config, $(MPI),     1, -D_MPI, ))
 
 SRC_DIR    := ./src
 INC_DIR    := ./include
+EXAMPLE    := ./example
+OBJ_DIR    := ./obj
+DEP_DIR    := ./.dep
 OUT_DIR    := ./bin
 
-INC        := -I$(INC_DIR)
+SOBJDIR 	 := ./obj/src
+SDEPDIR 	 := ./.dep/src
+
+SRC     := $(shell find $(SRC_DIR) -name "*.cpp")
+HEADER  := $(shell find $(INC_DIR) -name "*.h*")
+OBJS    := $(patsubst $(SRC_DIR)/%.cpp, $(SOBJDIR)/%.o, $(SRC))
+DEPS    := $(patsubst $(SRC_DIR)/%.cpp, $(SDEPDIR)/%.d, $(SRC))
+EXE     := $(sort $(wildcard $(EXAMPLE)/*.cpp))
+
+STREE   := $(sort $(patsubst %/,%,$(dir $(OBJS))))
+
+INC     := -I$(INC_DIR)
+SCPPFLAGS  = -MMD -MP -MF $(@:$(SOBJDIR)/%.o=$(SDEPDIR)/%.d)
 
 #################################################################
 #                         OS FUNCTIONS                          #
@@ -59,6 +80,8 @@ define MKDIR
 	$(if $(filter $(OS), Windows_NT), mkdir $(subst /,\,$(1)) > nul 2>&1 || (exit 0), mkdir -p $(1) )
 endef
 
+mkdir_dep  := $(call MKDIR, $(DEP_DIR))
+mkdir_obj  := $(call MKDIR, $(OBJ_DIR))
 mkdir_out  := $(call MKDIR, $(OUT_DIR))
 
 #################################################################
@@ -76,19 +99,36 @@ all: help
 #################################################################
 
 
-omp: | $(OUT_DIR) check-omp   				 ##@examples Compile the omp version of the genetic algorithm
+omp: | $(OBJS) $(OUT_DIR) check-omp   				   ##@examples Compile the omp version of the genetic algorithm
 		@printf "%-80s " "Compiling genetic algorithm omp version ..."
-		@$(CXX) $(CFLAGS) $(SRC_DIR)/omp_gen.cpp -o $(OUT_DIR)/omp_gen
+		@$(CXX) $(OBJS) $(CFLAGS) $(EXAMPLE)/omp_gen.cpp -o $(OUT_DIR)/omp_gen -pthread $(OCVFLAGS)
 		@printf "[done]\n"
 
-mpi: | $(OUT_DIR) check-mpi check-omp  ##@examples Compile the mpi version of the genetic algorithm
+image: | $(OBJS) $(OUT_DIR) check-omp   				 ##@examples Compile the omp version of the image genetic algorithm
+		@printf "%-80s " "Compiling genetic algorithm image omp version ..."
+		@$(CXX) $(OBJS) $(CFLAGS) $(EXAMPLE)/ga_image.cpp -o $(OUT_DIR)/ga_image -pthread $(OCVFLAGS) -D__images__
+		@printf "[done]\n"
+
+mpi: | $(OBJS) $(OUT_DIR) check-mpi check-omp    ##@examples Compile the mpi version of the genetic algorithm
 		@printf "%-80s " "Compiling genetic algorithm mpi version ..."
-		@$(OMPI_CXX) $(LDFLAGS) $(CFLAGS) $(MPI_OPTS) $(SRC_DIR)/boost_mpi_gen.cpp -o $(OUT_DIR)/mpi_gen
+		@$(OMPI_CXX) $(LDFLAGS) $(OBJS) $(CFLAGS) $(MPI_OPTS) $(EXAMPLE)/boost_mpi_gen.cpp -o $(OUT_DIR)/mpi_gen -pthread $(OCVFLAGS)
 		@printf "[done]\n"
 
 #################################################################
 #                         UTILS RULES                           #
 #################################################################
+
+.SECONDEXPANSION:
+$(SOBJDIR)/%.o: $(SRC_DIR)/%.cpp | $$(@D)
+		@printf "%-80s " "generating obj for $<"
+		@$(CXX) $(SCPPFLAGS) $(DFLAGS) $(IM_OPTS) $(CFLAGS) -o $@ -c $<
+		@printf "[done]\n"
+
+#$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp $(DEP_DIR)/%.d # compile all cpp in SRC_DIR for OBJ
+#		@printf "%-80s " "generating obj for $<"
+#		@$(CXX) $(DFLAGS) $(CFLAGS) -c $< -o $@
+#		@mv -f $(DEP_DIR)/$*.Td $(DEP_DIR)/$*.d && touch $@
+#		@printf "[done]\n"
 
 # Add the following 'help' target to your Makefile
 # And add help text after each target name starting with '\#\#'
@@ -106,14 +146,41 @@ HELP_FUN = \
 		}; \
 		print "\n"; }
 
-help:                   				##@utils Show this help message.
+help:                   				     ##@utils Show this help message.
 		@perl -e '$(HELP_FUN)' $(MAKEFILE_LIST)
 
-$(OUT_DIR):             				##@utils Make output (executables) directory.
+clean:                               ##@utils Clean all files.
+		@printf "%-80s " "Cleaning all files..."
+		@$(RM) -r $(OBJ_DIR) $(DEP_DIR) $(OUT_DIR)
+		@printf "[done]\n"
+
+$(DEP_DIR):                          ##@utils Make dependencies directory
+		@printf "%-80s " "Creating dependencies directory ..."
+		@$(mkdir_dep)
+		@printf "[done]\n"
+$(OBJ_DIR):                          ##@utils Make objs directory.
+		@printf "%-80s " "Creating objs directory ..."
+		@$(mkdir_obj)
+		@printf "[done]\n"
+$(OBJS_DIR): %:                      ##@utils Make objs directory.
+		@printf "%-80s " "Creating objs directory ..."
+		@mkdir -p $@
+		@printf "[done]\n"
+		@printf "%-80s " "Creating dependencies directory ..."
+		@mkdir -p $(@:$(SOBJDIR)%=$(SDEPDIR)%)
+		@printf "[done]\n"
+$(OUT_DIR):                          ##@utils Make output (executables) directory.
 		@printf "%-80s " "Creating output directory ..."
 		@$(mkdir_out)
 		@printf "[done]\n"
 
+$(STREE): %:
+		@printf "%-80s " "Creating obj directory ..."
+		@mkdir -p $@
+		@printf "[done]\n"
+		@printf "%-80s " "Creating dependencies directory ..."
+		@mkdir -p $(@:$(SOBJDIR)%=$(SDEPDIR)%)
+		@printf "[done]\n"
 
 check-omp:
 		@if test "$(OMP)" = "0" ; then \

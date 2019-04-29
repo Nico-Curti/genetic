@@ -34,3 +34,5 @@
 # Directories
 [Bb]in/
 [Bb]uild/
+.[Dd]ep/
+[Oo]bj/

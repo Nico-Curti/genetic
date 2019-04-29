@@ -10,7 +10,7 @@
 
 # Genetic algorithm
 
-Examples of genetic algorithm applications in parallel and distributed enironment.
+Examples of genetic algorithm applications in parallel and distributed environments.
 
 1. [Prerequisites](#prerequisites)
 2. [Installation](#installation)
@@ -34,18 +34,18 @@ For the MPI compiler must be set the variable OMPI_CXX.
 To build the executables, clone the repo and then type
 
 ```
-make omp
+make omp OMP=1
 ```
 
 for the multi-threading version, and
 
 ```
-make mpi
+make mpi MPI=1
 ```
 
 for the message-passing version.
 
-If in the Makefile the variable OMP is set to **true** you can enable multi-threading also for the mpi code (**hybrid version**).
+If in the Makefile the variable OMP is set to **true** (aka 1) you can enable multi-threading also for the mpi code (**hybrid version**).
 
 ## Authors
 

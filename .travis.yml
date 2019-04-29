@@ -1,20 +1,71 @@
 language: cpp
 
+
 matrix:
+  fast_finish: true
   include:
+# linux + gcc
     - os: linux
       compiler: gcc
-      name: ubuntu - gcc
+      name: ubuntu 14.04 - gcc@5.0
       addons:
         apt:
+          update: true
           sources:
-            ubuntu-toolchain-r-test
+            - ubuntu-toolchain-r-test
           packages:
-            - gcc-8
-            - g++-8
-            - ninja-build
-      env: BUILD=linux-gcc
+            - g++-5
+      env:
+        - MATRIX_EVAL="CC=g++-5 && CXX=g++-5"
+        - COMPILER_ID="gcc"
+        - BUILD=linux-gcc
 
+    - os: linux
+      compiler: gcc
+      name: ubuntu 14.04 - gcc@6.0
+      addons:
+        apt:
+          update: true
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-6
+      env:
+        - MATRIX_EVAL="CC=g++-6 && CXX=g++-6"
+        - COMPILER_ID="gcc"
+        - BUILD=linux-gcc
+
+    - os: linux
+      compiler: gcc
+      name: ubuntu 14.04 - gcc@7.0
+      addons:
+        apt:
+          update: true
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-7
+      env:
+        - MATRIX_EVAL="CC=g++-7 && CXX=g++-7"
+        - COMPILER_ID="gcc"
+        - BUILD=linux-gcc
+
+    - os: linux
+      compiler: gcc
+      name: ubuntu 14.04 - gcc@8.0
+      addons:
+        apt:
+          update: true
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-8
+      env:
+        - MATRIX_EVAL="CC=gcc-8 && CXX=g++-8"
+        - COMPILER_ID="gcc"
+        - BUILD=linux-gcc
+
+# osx + clang
     - os: osx
       compiler: clang
       addons:
@@ -25,7 +76,17 @@ matrix:
           packages:
             - clang-7.0
       env:
-        - CXX=clang++-7
+        - MATRIX_EVAL="CXX=clang++-7"
+        - LINKER_FLAGS="-stdlib=libc++ -lc++abi"
+        - CXXFLAGS="-stdlib=libc++"
+        - BUILD=osx-clang
+
+    - os: osx
+      compiler: clang
+      osx_image: xcode10.1
+      name: macOS - native clang (llvm backend)
+      env:
+        - MATRIX_EVAL=""
         - LINKER_FLAGS="-stdlib=libc++ -lc++abi"
         - CXXFLAGS="-stdlib=libc++"
         - BUILD=osx-clang
