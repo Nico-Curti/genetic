@@ -266,8 +266,8 @@ install:
 before_script:
   - mkdir build
   - cd build
-  - if [[ "$BUILD" == "linux-gcc" ]]; then cmake .. "-DCMAKE_BUILD_TYPE=Debug" "-DOMP=ON"  "-DMPI=ON"                                    ;fi
-  - if [[ "$BUILD" == "osx-clang" ]]; then cmake .. "-DCMAKE_BUILD_TYPE=Debug" "-DOMP=OFF" "-DMPI=ON"                                    ;fi
+  - if [[ "$COMPILER_ID" == "gcc"   ]]; then cmake .. "-DCMAKE_BUILD_TYPE=Debug" "-DOMP=ON"  "-DMPI=ON"                                  ;fi
+  - if [[ "$COMPILER_ID" == "clang" ]]; then cmake .. "-DCMAKE_BUILD_TYPE=Debug" "-DOMP=OFF" "-DMPI=ON"                                  ;fi
 
 script:
   - cmake --build .
