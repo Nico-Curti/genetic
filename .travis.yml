@@ -229,6 +229,7 @@ matrix:
         - MATRIX_EVAL="CXX=clang++-7"
         - LINKER_FLAGS="-stdlib=libc++ -lc++abi"
         - CXXFLAGS="-stdlib=libc++"
+        - COMPILER_ID="clang"
         - BUILD=osx-clang
 
     - os: osx
@@ -239,9 +240,16 @@ matrix:
         - MATRIX_EVAL=""
         - LINKER_FLAGS="-stdlib=libc++ -lc++abi"
         - CXXFLAGS="-stdlib=libc++"
+        - COMPILER_ID="clang"
         - BUILD=osx-clang
 
+allow_failures:
+    - name: ubuntu 14.04 - clang@3.6
+    - name: ubuntu 14.04 - clang@3.8
+    - name: ubuntu 14.04 - clang@3.9
+
 before_install:
+  - test -n $CC && unset CC
   - travis_retry eval "${MATRIX_EVAL}"
   - pip install --user codecov
   - if [[ "$BUILD" == "linux-gcc" ]]; then sudo apt-get install libboost-all-dev libopenmpi-dev                                          ;fi
