@@ -218,8 +218,10 @@ matrix:
 # osx + clang
     - os: osx
       compiler: clang
+      name: macOS - clang@7.0
       addons:
         apt:
+          update: true
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-trusty-7
@@ -231,7 +233,7 @@ matrix:
             - libc++-dev
             - libc++abi-dev
       env:
-        - MATRIX_EVAL="CC=clang-7 && CXX=clang++-7"
+        - MATRIX_EVAL="CC=clang-7.0 && CXX=clang++-7.0"
         - LINKER_FLAGS="-stdlib=libc++ -lc++abi"
         - CXXFLAGS="-stdlib=libc++"
         - COMPILER_ID="clang"
@@ -243,8 +245,8 @@ matrix:
       name: macOS - native clang (llvm backend)
       env:
         - MATRIX_EVAL=""
-        - LINKER_FLAGS="-stdlib=libc++ -lc++abi"
-        - CXXFLAGS="-stdlib=libc++"
+        #- LINKER_FLAGS="-stdlib=libc++ -lc++abi"
+        #- CXXFLAGS="-stdlib=libc++"
         - COMPILER_ID="clang"
         - BUILD=osx-clang
 
@@ -254,7 +256,6 @@ matrix:
     - name: ubuntu 14.04 - clang@3.9
 
 before_install:
-  - test -n $CC && unset CC
   - travis_retry eval "${MATRIX_EVAL}"
   - pip install --user codecov
   - if [[ "$BUILD" == "linux-gcc" ]]; then sudo apt-get install libboost-all-dev libopenmpi-dev                                          ;fi
