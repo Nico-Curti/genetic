@@ -1,5 +1,8 @@
 language: cpp
 
+cache:
+  directories:
+    - ${TRAVIS_BUILD_DIR}/deps/llvm-3.9.0
 
 matrix:
   fast_finish: true
@@ -18,7 +21,6 @@ matrix:
       env:
         - MATRIX_EVAL="CC=g++-5 && CXX=g++-5"
         - COMPILER_ID="gcc"
-        - BUILD=linux-gcc
 
     - os: linux
       compiler: gcc
@@ -33,7 +35,6 @@ matrix:
       env:
         - MATRIX_EVAL="CC=g++-6 && CXX=g++-6"
         - COMPILER_ID="gcc"
-        - BUILD=linux-gcc
 
     - os: linux
       compiler: gcc
@@ -48,7 +49,6 @@ matrix:
       env:
         - MATRIX_EVAL="CC=g++-7 && CXX=g++-7"
         - COMPILER_ID="gcc"
-        - BUILD=linux-gcc
 
     - os: linux
       compiler: gcc
@@ -63,7 +63,6 @@ matrix:
       env:
         - MATRIX_EVAL="CC=gcc-8 && CXX=g++-8"
         - COMPILER_ID="gcc"
-        - BUILD=linux-gcc
 
 # linux + clang
 
@@ -88,7 +87,6 @@ matrix:
         - COMPILER_ID="clang"
         - LLVM_VERSION=3.9.0
         - LINKER_FLAGS="-stdlib=libstdc++ -lc++abi"
-        - BUILD=linux-gcc
 
     - os: linux
       compiler: clang
@@ -113,7 +111,6 @@ matrix:
         - COMPILER_ID="clang"
         - LLVM_VERSION=3.9.0
         - LINKER_FLAGS="-stdlib=libstdc++ -lc++abi"
-        - BUILD=linux-gcc
 
     - os: linux
       compiler: clang
@@ -138,7 +135,6 @@ matrix:
         - COMPILER_ID="clang"
         - LLVM_VERSION=3.9.0
         - LINKER_FLAGS="-stdlib=libstdc++ -lc++abi"
-        - BUILD=linux-gcc
 
     - os: linux
       compiler: clang
@@ -162,7 +158,6 @@ matrix:
         - CMAKE_LINKER=${CXX}
         - COMPILER_ID="clang"
         - LLVM_VERSION=4.0.0
-        - BUILD=linux-gcc
 
     - os: linux
       compiler: clang
@@ -187,7 +182,6 @@ matrix:
         - CMAKE_LINKER=${CXX}
         - COMPILER_ID="clang"
         - LLVM_VERSION=5.0.0
-        - BUILD=linux-gcc
 
     - os: linux
       compiler: clang
@@ -213,7 +207,6 @@ matrix:
         - CMAKE_LINKER=${CXX}
         - COMPILER_ID="clang"
         - LLVM_VERSION=6.0.0
-        - BUILD=linux-gcc
 
 # osx + clang
     - os: osx
@@ -237,52 +230,47 @@ matrix:
         - LINKER_FLAGS="-stdlib=libc++ -lc++abi"
         - CXXFLAGS="-stdlib=libc++"
         - COMPILER_ID="clang"
-        - BUILD=osx-clang
 
     - os: osx
-      compiler: clang
       osx_image: xcode10.1
+      compiler: clang
       name: macOS - native clang (llvm backend)
       env:
         - MATRIX_EVAL=""
-        #- LINKER_FLAGS="-stdlib=libc++ -lc++abi"
-        #- CXXFLAGS="-stdlib=libc++"
         - COMPILER_ID="clang"
-        - BUILD=osx-clang
 
   allow_failures:
     - name: ubuntu 14.04 - clang@3.6
     - name: ubuntu 14.04 - clang@3.8
     - name: ubuntu 14.04 - clang@3.9
+    - name: macOS - clang@7.0
 
 before_install:
   - travis_retry eval "${MATRIX_EVAL}"
-  - pip install --user codecov
-  - if [[ "$BUILD" == "linux-gcc" ]]; then sudo apt-get install libboost-all-dev libopenmpi-dev                                          ;fi
-  - if [[ "$BUILD" == "osx-clang" ]]; then wget --no-check-certificate https://cmake.org/files/v3.13/cmake-3.13.1-Darwin-x86_64.tar.gz   ;fi
-  - if [[ "$BUILD" == "osx-clang" ]]; then tar -xzf cmake-3.13.1-Darwin-x86_64.tar.gz                                                    ;fi
-  - if [[ "$BUILD" == "osx-clang" ]]; then export PATH=$PWD/cmake-3.13.1-Darwin-x86_64/CMake.app/Contents/bin:$PATH                      ;fi
-
-  ###############################################################################################################################################
-
-  - if [[ "$BUILD" == "linux-gcc" ]]; then wget --no-check-certificate https://cmake.org/files/v3.13/cmake-3.13.1-Linux-x86_64.tar.gz    ;fi
-  - if [[ "$BUILD" == "linux-gcc" ]]; then tar -xzf cmake-3.13.1-Linux-x86_64.tar.gz                                                     ;fi
-  - if [[ "$BUILD" == "linux-gcc" ]]; then export PATH=$PWD/cmake-3.13.1-Linux-x86_64/bin:$PATH                                          ;fi
 
 install:
-  - if [[ "$BUILD" == "osx-clang" ]]; then brew update                                                                                   ;fi
-  - if [[ "$BUILD" == "osx-clang" ]]; then brew install llvm                                                                             ;fi
-  - if [[ "$BUILD" == "osx-clang" ]]; then export CMAKE_LINKER=clang++-7                                                                 ;fi
+  # Install new Cmake
+  - if [[ "$TRAVIS_OS_NAME" == "osx"   ]]; then wget --no-check-certificate https://cmake.org/files/v3.13/cmake-3.13.1-Darwin-x86_64.tar.gz   ;fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx"   ]]; then tar -xzf cmake-3.13.1-Darwin-x86_64.tar.gz                                                    ;fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx"   ]]; then export PATH=$PWD/cmake-3.13.1-Darwin-x86_64/CMake.app/Contents/bin:$PATH                      ;fi
 
-  - if [[ "$BUILD" == "osx-clang" ]]; then brew install openmpi                                                                          ;fi
-  - if [[ "$BUILD" == "osx-clang" ]]; then brew install boost-mpi                                                                        ;fi
   ###############################################################################################################################################
-before_script:
-  - mkdir build
-  - cd build
-  - if [[ "$COMPILER_ID" == "gcc"   ]]; then cmake .. "-DCMAKE_BUILD_TYPE=Debug" "-DOMP=ON"  "-DMPI=ON"                                  ;fi
-  - if [[ "$COMPILER_ID" == "clang" ]]; then cmake .. "-DCMAKE_BUILD_TYPE=Debug" "-DOMP=OFF" "-DMPI=ON"                                  ;fi
+
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then wget --no-check-certificate https://cmake.org/files/v3.13/cmake-3.13.1-Linux-x86_64.tar.gz    ;fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then tar -xzf cmake-3.13.1-Linux-x86_64.tar.gz                                                     ;fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export PATH=$PWD/cmake-3.13.1-Linux-x86_64/bin:$PATH                                          ;fi
+
+  # Install OpenMPI
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install libboost-all-dev libopenmpi-dev                                          ;fi
+  ###############################################################################################################################################
+  - if [[ "$TRAVIS_OS_NAME" == "osx"   ]]; then brew install openmpi                                                                          ;fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx"   ]]; then brew install boost-mpi                                                                        ;fi
+
+  # Prepare build
+  - mkdir build && cd build
+  - if [[ "$COMPILER_ID" == "gcc"   ]]; then cmake .. "-DCMAKE_BUILD_TYPE=Debug" "-DOMP=ON"  "-DMPI=ON"                                       ;fi
+  - if [[ "$COMPILER_ID" == "clang" ]]; then cmake .. "-DCMAKE_BUILD_TYPE=Debug" "-DOMP=OFF" "-DMPI=ON"                                       ;fi
+  - cd ..
 
 script:
-  - cmake --build .
-
+  - cd build && cmake --build . --target install -- -j8 && cd ..
