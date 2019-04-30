@@ -42,7 +42,7 @@ int main()
   std :: srand(rng_seed);
   image target(filename);
 
-  auto best_im = ga_omp<_single>(target,
+  auto best_im = ga_omp<_single>(target.size(),
                                  50,      // number of dna
                                  15000,     // max number of iterations
                                  fitness,  // fitness function as anonymous struct operator
@@ -50,7 +50,8 @@ int main()
                                  .1f,      // percentage of population to conserve
                                  .3f,      // probability of mutation
                                  rng_seed, // random seed
-                                 nth       // number of threads
+                                 nth,      // number of threads
+                                 &target
                                  );
 
   best_im._w = target._w;

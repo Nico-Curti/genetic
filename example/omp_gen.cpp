@@ -37,32 +37,34 @@ int main()
   std :: srand(rng_seed);
   mystring target(TARGET);
 
-  auto best_str = ga_omp<_single>(target,
-                                  1024,      // number of dna
+  auto best_str = ga_omp<_single>(target.size(),
+                                  1024,     // number of dna
                                   2000,     // max number of iterations
                                   fitness,  // fitness function as anonymous struct operator
                                   1,        // number of mutations
                                   .1f,      // percentage of population to conserve
                                   .4f,      // probability of mutation
                                   rng_seed, // random seed
-                                  nth       // number of threads
+                                  nth,      // number of threads
+                                  &target
                                   );
 
   std :: cout << "Naive GA Best found: " << std :: endl;
   std :: cout << best_str << std :: endl;
 
-//  auto best_str2 = brkga_omp<_single>(target,
-//                                      2048,     // number of dna
-//                                      16384,    // max number of iterations
-//                                      fitness,  // fitness function as anonymous struct operator
-//                                      .3f,      // percentage of population to conserve
-//                                      .1f,      // percentage of mutants in each generation
-//                                      rng_seed, // random seed
-//                                      nth       // number of threads
-//                                      );
-//
-//  std :: cout << "BRKGA Best found: " << std :: endl;
-//  std :: cout << best_str2 << std :: endl;
+  auto best_str2 = brkga_omp<_single>(target.size(),
+                                      1024,     // number of dna
+                                      2000,     // max number of iterations
+                                      fitness,  // fitness function as anonymous struct operator
+                                      .1f,      // percentage of population to conserve
+                                      .1f,      // percentage of mutants in each generation
+                                      rng_seed, // random seed
+                                      nth,      // number of threads
+                                      &target
+                                      );
+
+  std :: cout << "BRKGA Best found: " << std :: endl;
+  std :: cout << best_str2 << std :: endl;
 
   return 0;
 }

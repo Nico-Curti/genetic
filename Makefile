@@ -11,10 +11,9 @@ RESET  := $(shell tput -Txterm sgr0   )
 #                         COMPILE OPTIONS                       #
 #################################################################
 
-OMP     := 0
-MPI     := 0
-VERBOSE := 1
-IMAGE   := 0
+OMP     ?= 0
+MPI     ?= 0
+VERBOSE ?= 1
 
 STD    := -std=c++14
 CFLAGS := -Wall -Wextra -Wno-unused-result -Wpedantic
@@ -45,22 +44,21 @@ MPI_OPTS := $(strip $(call config, $(MPI),     1, -D_MPI, ))
 
 IM_OPTS  := $(strip $(call config, $(IMAGE),   1, -D__images__, ))
 
-OCVFLAGS := `pkg-config --libs opencv`
 LDFLAGS  += -pthread
 
 #################################################################
 #                         SETTING DIRECTORIES                   #
 #################################################################
 
-SRC_DIR    := ./src
-INC_DIR    := ./include
-EXAMPLE    := ./example
-OBJ_DIR    := ./obj
-DEP_DIR    := ./.dep
-OUT_DIR    := ./bin
+SRC_DIR := ./src
+INC_DIR := ./include
+EXAMPLE := ./example
+OBJ_DIR := ./obj
+DEP_DIR := ./.dep
+OUT_DIR := ./bin
 
-SOBJDIR 	 := ./obj/src
-SDEPDIR 	 := ./.dep/src
+SOBJDIR := ./obj/src
+SDEPDIR := ./.dep/src
 
 SRC     := $(shell find $(SRC_DIR) -name "*.cpp")
 HEADER  := $(shell find $(INC_DIR) -name "*.h*")
@@ -71,7 +69,7 @@ EXE     := $(sort $(wildcard $(EXAMPLE)/*.cpp))
 STREE   := $(sort $(patsubst %/,%,$(dir $(OBJS))))
 
 INC     := -I$(INC_DIR)
-SCPPFLAGS  = -MMD -MP -MF $(@:$(SOBJDIR)/%.o=$(SDEPDIR)/%.d)
+SCPPFLAGS := -MMD -MP -MF $(@:$(SOBJDIR)/%.o=$(SDEPDIR)/%.d)
 
 #################################################################
 #                         OS FUNCTIONS                          #
@@ -102,17 +100,20 @@ all: help
 
 omp: | $(OBJS) $(OUT_DIR) check-omp   				   ##@examples Compile the omp version of the genetic algorithm
 		@printf "%-80s " "Compiling genetic algorithm omp version ..."
-		@$(CXX) $(OBJS) $(CFLAGS) $(EXAMPLE)/omp_gen.cpp -o $(OUT_DIR)/omp_gen $(OCVFLAGS)
+		@$(CXX) $(OBJS) $(CFLAGS) $(EXAMPLE)/omp_gen.cpp -o $(OUT_DIR)/omp_gen $(LDFLAGS)
 		@printf "[done]\n"
 
-image: | $(OBJS) $(OUT_DIR) check-omp   				 ##@examples Compile the omp version of the image genetic algorithm
+image: CFLAGS += -D__images__
+image: LDFLAGS += `pkg-config --libs opencv`
+
+image: | $(OBJS) $(OUT_DIR) check-omp            ##@examples Compile the genetic algorithm for image reconstruction
 		@printf "%-80s " "Compiling genetic algorithm image omp version ..."
-		@$(CXX) $(OBJS) $(CFLAGS) $(EXAMPLE)/ga_image.cpp -o $(OUT_DIR)/ga_image $(OCVFLAGS) -D__images__
+		@$(CXX) $(OBJS) $(CFLAGS) $(EXAMPLE)/ga_image.cpp -o $(OUT_DIR)/ga_image $(LDFLAGS)
 		@printf "[done]\n"
 
 mpi: | $(OBJS) $(OUT_DIR) check-mpi check-omp    ##@examples Compile the mpi version of the genetic algorithm
 		@printf "%-80s " "Compiling genetic algorithm mpi version ..."
-		@$(OMPI_CXX) $(LDFLAGS) $(OBJS) $(CFLAGS) $(MPI_OPTS) $(EXAMPLE)/boost_mpi_gen.cpp -o $(OUT_DIR)/mpi_gen $(OCVFLAGS)
+		@$(OMPI_CXX) $(LDFLAGS) $(OBJS) $(CFLAGS) $(MPI_OPTS) $(EXAMPLE)/boost_mpi_gen.cpp -o $(OUT_DIR)/mpi_gen
 		@printf "[done]\n"
 
 #################################################################
@@ -124,12 +125,6 @@ $(SOBJDIR)/%.o: $(SRC_DIR)/%.cpp | $$(@D)
 		@printf "%-80s " "generating obj for $<"
 		@$(CXX) $(SCPPFLAGS) $(DFLAGS) $(IM_OPTS) $(CFLAGS) -o $@ -c $<
 		@printf "[done]\n"
-
-#$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp $(DEP_DIR)/%.d # compile all cpp in SRC_DIR for OBJ
-#		@printf "%-80s " "generating obj for $<"
-#		@$(CXX) $(DFLAGS) $(CFLAGS) -c $< -o $@
-#		@mv -f $(DEP_DIR)/$*.Td $(DEP_DIR)/$*.d && touch $@
-#		@printf "[done]\n"
 
 # Add the following 'help' target to your Makefile
 # And add help text after each target name starting with '\#\#'
@@ -175,7 +170,7 @@ $(OUT_DIR):                          ##@utils Make output (executables) director
 		@$(mkdir_out)
 		@printf "[done]\n"
 
-$(STREE): %:
+$(STREE): %:												 ##@utils Make obj tree directories.
 		@printf "%-80s " "Creating obj directory ..."
 		@mkdir -p $@
 		@printf "[done]\n"
@@ -183,12 +178,12 @@ $(STREE): %:
 		@mkdir -p $(@:$(SOBJDIR)%=$(SDEPDIR)%)
 		@printf "[done]\n"
 
-check-omp:
+check-omp:													##@utils Verify omp enable.
 		@if test "$(OMP)" = "0" ; then \
         echo "${YELLOW}Warning! OMP not set!${RESET}"; \
     fi;
 
-check-mpi:
+check-mpi:													##@utils Verify mpi enable.
 		@if test "$(MPI)" = "0"; then \
 				echo "${RED}Error! MPI not set!${RESET}"; \
 				exit 1; \

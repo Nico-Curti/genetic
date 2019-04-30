@@ -2,15 +2,18 @@
 #include <sorting/merge_sort.hpp>
 
 template < int cross_t, typename genome, typename Func >
-genome ga_omp(const genome & target, const std :: size_t & n_population, const std :: size_t & max_iter, Func fit,
+genome ga_omp(const std :: size_t & lenght, const std :: size_t & n_population, const std :: size_t & max_iter, Func fit,
             std :: size_t num_mutation,
             float elite_rate,
             float mutation_rate,
             std :: size_t seed,
-            __unused int nth)
+            __unused int nth,
+            const genome * target)
 {
   using res_t = typename std :: result_of < Func(const genome &, const genome &) > :: type;
-  const std :: size_t LENGHT = target.size();
+  const std :: size_t LENGHT = target ? target->size() : lenght;
+
+  assert(LENGHT == lenght && "Invalid input! Target size is different from genome lenght");
 
 #ifdef _OPENMP
   nth -= nth % 2;
@@ -66,7 +69,7 @@ genome ga_omp(const genome & target, const std :: size_t & n_population, const s
       for (std :: size_t i = 0; i < n_population; ++i)
       {
         // argsort variables
-        fitness[i] = fit(population[i], target);
+        fitness[i] = fit(population[i], *target);
         rank[i]    = i;
       }
 
@@ -76,7 +79,7 @@ genome ga_omp(const genome & target, const std :: size_t & n_population, const s
                        fitness.get(),
                        [&](const genome & pop)
                        {
-                        return fit(pop, target);
+                        return fit(pop, *target);
                        });
       std :: iota(rank.get(), rank.get() + n_population, 0);
 
@@ -175,14 +178,17 @@ genome ga_omp(const genome & target, const std :: size_t & n_population, const s
 
 
 template < int cross_t, typename genome, typename Func >
-genome brkga_omp(const genome & target, const int & n_population, const std :: size_t & max_iter, Func fit,
+genome brkga_omp(const std :: size_t & lenght, const int & n_population, const std :: size_t & max_iter, Func fit,
                float elit_percentage,
                float mutant_percentage,
                std :: size_t seed,
-               __unused int nth)
+               __unused int nth,
+               const genome * target)
 {
   using res_t = typename std :: result_of < Func(const genome &, const genome &) > :: type;
-  const std :: size_t LENGHT = target.size();
+  const std :: size_t LENGHT = target ? target->size() : lenght;
+
+  assert(LENGHT == lenght && "Invalid input! Target size is different from genome lenght");
 
 #ifdef _OPENMP
   nth -= nth % 2;
@@ -191,7 +197,7 @@ genome brkga_omp(const genome & target, const int & n_population, const std :: s
 #endif
 
   const int elite  = static_cast < int >(n_population * elit_percentage);
-  const int mutant = static_cast < int >(n_population * mutant_percentage);
+  const int mutant = n_population - static_cast < int >(n_population * mutant_percentage);
   int best = 0;
   std :: unique_ptr < genome[] > population(new genome[n_population]),
                                  new_gen(   new genome[n_population]);
@@ -239,7 +245,7 @@ genome brkga_omp(const genome & target, const int & n_population, const std :: s
       for (int i = 0; i < n_population; ++i)
       {
         // argsort variables
-        fitness[i] = fit(population[i], target);
+        fitness[i] = fit(population[i], *target);
         rank[i]    = i;
       }
 
@@ -249,7 +255,7 @@ genome brkga_omp(const genome & target, const int & n_population, const std :: s
                        fitness.get(),
                        [&](const genome & pop)
                        {
-                        return fit(pop, target);
+                        return fit(pop, *target);
                        });
       std :: iota(rank.get(), rank.get() + n_population, 0);
 
@@ -295,7 +301,7 @@ genome brkga_omp(const genome & target, const int & n_population, const std :: s
 #ifdef _OPENMP
 #pragma omp for
 #endif
-      for (int i = 0; i < elite; ++i) new_gen[i] = population[rank[i]];
+      for (int i = 0; i < elite; ++i) new_gen[i] = population[ rank[i] ];
 
 #ifdef _OPENMP
 #pragma omp for
@@ -303,7 +309,7 @@ genome brkga_omp(const genome & target, const int & n_population, const std :: s
         for (int i = elite; i < mutant; ++i)
         {
           const int r1 = static_cast < int >(rng(engine) * elite);
-          const int r2 = static_cast < int >(rng(engine) * (n_population - elite) + elite);
+          const int r2 = static_cast < int >(rng(engine) * (mutant - elite) + elite);
           new_gen[i] = population[ rank[r1] ].template crossover < cross_t > ( population[ rank[r2] ]);
         }
 #ifdef _OPENMP
