@@ -111,6 +111,11 @@ image: | $(OBJS) $(OUT_DIR) check-omp            ##@examples Compile the genetic
 		@$(CXX) $(OBJS) $(CFLAGS) $(EXAMPLE)/ga_image.cpp -o $(OUT_DIR)/ga_image $(LDFLAGS)
 		@printf "[done]\n"
 
+actions: | $(OBJS) $(OUT_DIR) check-omp          ##@examples Compile Super Mario genetic algorithm
+		@printf "%-80s " "Compiling genetic algorithm Super Mario omp version ..."
+		@$(CXX) $(OBJS) $(CFLAGS) $(EXAMPLE)/ga_super_mario.cpp -o $(OUT_DIR)/ga_super_mario $(LDFLAGS)
+		@printf "[done]\n"
+
 mpi: | $(OBJS) $(OUT_DIR) check-mpi check-omp    ##@examples Compile the mpi version of the genetic algorithm
 		@printf "%-80s " "Compiling genetic algorithm mpi version ..."
 		@$(OMPI_CXX) $(LDFLAGS) $(OBJS) $(CFLAGS) $(MPI_OPTS) $(EXAMPLE)/boost_mpi_gen.cpp -o $(OUT_DIR)/mpi_gen

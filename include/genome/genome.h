@@ -53,6 +53,7 @@ public:
   // Operators
 
   type & operator [] (std :: size_t i);
+  type   operator [] (std :: size_t i) const;
 
   Genome & operator = (const Genome & g);
   Genome & operator = (Genome && g);

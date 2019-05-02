@@ -12,6 +12,11 @@ template < class type > type & Genome < type > :: operator [] (std :: size_t i)
   return _data[i];
 }
 
+template < class type > type Genome < type > :: operator [] (std :: size_t i) const
+{
+  return _data[i];
+}
+
 template < class type > Genome <type> :: Genome (std :: size_t size) : _size(size)
 {
 #ifdef _MPI

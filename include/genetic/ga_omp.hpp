@@ -69,7 +69,7 @@ genome ga_omp(const std :: size_t & lenght, const std :: size_t & n_population, 
       for (std :: size_t i = 0; i < n_population; ++i)
       {
         // argsort variables
-        fitness[i] = fit(population[i], *target);
+        fitness[i] = target ? fit(population[i], *target) : fit(population[i], {});
         rank[i]    = i;
       }
 
@@ -79,7 +79,7 @@ genome ga_omp(const std :: size_t & lenght, const std :: size_t & n_population, 
                        fitness.get(),
                        [&](const genome & pop)
                        {
-                        return fit(pop, *target);
+                        return target ? fit(pop, *target) : fit(pop, {});
                        });
       std :: iota(rank.get(), rank.get() + n_population, 0);
 

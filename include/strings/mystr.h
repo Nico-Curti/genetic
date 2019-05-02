@@ -21,7 +21,7 @@ const char charset[] =
             "abcdefghijklmnopqrstuvwxyz"
             "|\\\"£$%&/()=?'^ìéè[]+*ò@#°àù,;.:-_"
             "\t ";
-const std :: size_t max_index_char_set = sizeof ( charset ) - 1;
+const std :: size_t max_index_char_set = sizeof ( charset ) / sizeof ( char );
 
 
 class mystring : public Genome <char>
@@ -64,12 +64,12 @@ __unused struct
 {
   int operator () (mystring a, mystring b)
   {
-    return std::inner_product(a.get(), a.get() + a.size(), b.get(), 0,
-                              std :: plus < int >(), [](const auto & i, const auto & j)
-                              {
-                                return (static_cast < int >(i) - static_cast < int >(j)) *
-                                       (static_cast < int >(i) - static_cast < int >(j));
-                              });
+    return std :: inner_product(a.get(), a.get() + a.size(), b.get(), 0,
+                                std :: plus < int >(), [](const auto & i, const auto & j)
+                                {
+                                  return (static_cast < int >(i) - static_cast < int >(j)) *
+                                         (static_cast < int >(i) - static_cast < int >(j));
+                                });
   }
 } fitness;
 
