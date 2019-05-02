@@ -41,15 +41,20 @@ if __name__ == '__main__':
   env = gym_super_mario_bros.make('SuperMarioBros-v0')
   env = BinarySpaceToDiscreteSpaceEnv(env, COMPLEX_MOVEMENT)
 
-  rewards = [None] * args.dim
   done = True
+  old = 40
 
   for i, step in enumerate(args.movements):
     if done:
       state = env.reset()
-    _, reward, done, _ = env.step(step)
-    rewards[i] = reward
-    #env.render()
+    s, reward, done, info = env.step(step)
+
+    state = s
+    if i % 50 == 0:
+      if old == info['x_pos']: break
+      else: old = info['x_pos']
+
+  fitness = float('inf') if info['x_pos'] <= 40 else -info['x_pos']
   env.close()
 
-  print(*rewards)
+  print(fitness)

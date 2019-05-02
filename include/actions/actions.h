@@ -5,7 +5,6 @@
 #include <memory>      // std::make_unique
 #include <array>       // std::array
 #include <fstream>     // FILE
-#include <vector>      // std::vector
 #include <string>      // std::string
 #include <genome/genome.hpp>
 
@@ -27,11 +26,6 @@
 #else
   #define Popen popen
   #define Pclose pclose
-  #include <dirent.h>
-  #include <sys/types.h>
-  #include <errno.h>
-  #include <unistd.h>
-  #include <stdio.h>
 #endif
 
 enum { noop = 0,
@@ -73,27 +67,21 @@ public:
   static int gen_random ();
 
   std :: string capture_output (const char * cmd);
-  static std :: vector < std :: string > split (std :: string original, char delimiter = ' ');
 };
 
 std :: ostream & operator << (std :: ostream & os, actions s);
 
 __unused struct
 {
-  int operator () (actions a, __unused actions b)
+  float operator () (actions a, __unused actions b)
   {
     std :: string movements = "python ./utility/super_mario_rewards.py --movements ";
     for ( std :: size_t i = 0; i < a.size(); ++i) movements += std :: to_string(a[i]) + " ";
     movements += "--dimension " + std :: to_string(a.size());
 
     std :: string rewards = a.capture_output(movements.c_str());
-    std :: vector < std :: string > reward_token = actions :: split(rewards, ' ');
 
-    return std :: accumulate(reward_token.begin(), reward_token.end(), 0,
-                             [](int res, std :: string token)
-                             {
-                               return res - std :: stoi(token);
-                             });
+    return std :: stof(rewards);
   }
 } fitness;
 

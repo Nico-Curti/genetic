@@ -53,26 +53,6 @@ std :: string actions :: capture_output (const char * cmd)
   return result;
 }
 
-std :: vector < std :: string > actions :: split (std :: string original, char delimiter)
-{
-  std :: vector < std :: string > results;
-
-  std :: string :: const_iterator start = original.begin();
-  std :: string :: const_iterator end   = original.end();
-  std :: string :: const_iterator next  = std :: find(start, end, delimiter);
-
-  while ( next != end )
-  {
-    results.emplace_back(std :: string(start, next));
-    start = next + 1;
-    next = std :: find(start, end, delimiter);
-  }
-
-  results.emplace_back(std :: string(start, next));
-  return results;
-}
-
-
 std :: ostream & operator << (std :: ostream & os, actions s)
 {
   for ( std :: size_t i = 0; i < s.size(); ++i)
