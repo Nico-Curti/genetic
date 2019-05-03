@@ -26,6 +26,11 @@
 #else
   #define Popen popen
   #define Pclose pclose
+  #include <dirent.h>
+  #include <sys/types.h>
+  #include <errno.h>
+  #include <unistd.h>
+  #include <stdio.h>
 #endif
 
 enum { noop = 0,

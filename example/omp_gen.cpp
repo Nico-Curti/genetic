@@ -43,7 +43,7 @@ int main()
                                   fitness,  // fitness function as anonymous struct operator
                                   1,        // number of mutations
                                   .1f,      // percentage of population to conserve
-                                  .4f,      // probability of mutation
+                                  .3f,      // probability of mutation
                                   rng_seed, // random seed
                                   nth,      // number of threads
                                   &target

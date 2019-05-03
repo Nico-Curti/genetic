@@ -3,7 +3,9 @@
 import argparse
 from nes_py.wrappers import BinarySpaceToDiscreteSpaceEnv
 import gym_super_mario_bros
-from gym_super_mario_bros.actions import COMPLEX_MOVEMENT
+from gym_super_mario_bros.actions import RIGHT_ONLY, SIMPLE_MOVEMENT, COMPLEX_MOVEMENT
+
+MOVEMENTS = COMPLEX_MOVEMENT
 
 def parse_args():
   description = "Super Mario rewards calculator"
@@ -15,7 +17,7 @@ def parse_args():
                       type=int,
                       action='store',
                       nargs='+',
-                      choices=range(len(COMPLEX_MOVEMENT)),
+                      choices=range(len(MOVEMENTS)),
                       help='List of movements')
   parser.add_argument('--dimension',
                       dest='dim',
@@ -39,7 +41,7 @@ if __name__ == '__main__':
   args = parse_args()
 
   env = gym_super_mario_bros.make('SuperMarioBros-v0')
-  env = BinarySpaceToDiscreteSpaceEnv(env, COMPLEX_MOVEMENT)
+  env = BinarySpaceToDiscreteSpaceEnv(env, MOVEMENTS)
 
   done = True
   old = 40
@@ -54,7 +56,7 @@ if __name__ == '__main__':
       if old == info['x_pos']: break
       else: old = info['x_pos']
 
-  fitness = float('inf') if info['x_pos'] <= 40 else -info['x_pos']
+  fitness =  - reward / 30 + (args.dim - info['x_pos']) / args.dim + abs(3 - info['life']) / 3 - info['score'] / ((info['score']+1e-10) * 100)
   env.close()
 
   print(fitness)

@@ -42,12 +42,12 @@ int main()
   std :: srand(rng_seed);
   const int genome_size = 1000;
 
-  auto best_move = ga_omp<_single, actions>(genome_size,
-                                           20,       // number of dna
-                                           20,       // max number of iterations
+  auto best_move = ga_omp<_multi, actions>(genome_size,
+                                           128,       // number of dna
+                                           50,       // max number of iterations
                                            fitness,  // fitness function as anonymous struct operator
-                                           1,        // number of mutations
-                                           .1f,      // percentage of population to conserve
+                                           10,        // number of mutations
+                                           .3f,      // percentage of population to conserve
                                            .3f,      // probability of mutation
                                            rng_seed, // random seed
                                            nth       // number of threads
