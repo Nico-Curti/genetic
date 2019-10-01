@@ -66,7 +66,7 @@ class ProgressBar
   std :: string _e;
   std :: string _value;
 
-  const int PBWIDTH = 20;
+  static const int PBWIDTH = 20;
 
 public:
 

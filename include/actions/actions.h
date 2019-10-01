@@ -50,7 +50,7 @@ enum { noop = 0,
 const int moveset[] = {noop, right, rightA, rightB, rightAB, A, left, leftA, leftB, leftAB, down, up };
 const std :: size_t max_index_move_set = sizeof ( moveset ) / sizeof ( int );
 
-class actions : public Genome <int>
+class actions : public Genome < int >
 {
 
 public:

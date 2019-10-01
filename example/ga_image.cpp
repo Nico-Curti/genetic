@@ -43,8 +43,8 @@ int main()
   image target(filename);
 
   auto best_im = ga_omp<_single>(target.size(),
-                                 50,      // number of dna
-                                 15000,     // max number of iterations
+                                 50,       // number of dna
+                                 15000,    // max number of iterations
                                  fitness,  // fitness function as anonymous struct operator
                                  1,        // number of mutations
                                  .1f,      // percentage of population to conserve

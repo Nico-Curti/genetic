@@ -17,7 +17,7 @@
   #endif
 #endif
 
-class image : public Genome <unsigned char>
+class image : public Genome < unsigned char >
 {
 
 public:
@@ -31,7 +31,7 @@ public:
 
   image ();
   image (std :: string filename);
-  image & operator = ( image a);
+  image & operator = ( image a );
   image & operator = (Genome < unsigned char > g);
 
   // Destructors

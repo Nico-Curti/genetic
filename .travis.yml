@@ -69,14 +69,18 @@ matrix:
     - os: linux
       compiler: clang
       name: ubuntu 14.04 - clang@3.6
+      dist: trusty
       addons:
         apt:
           update: true
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-trusty-3.8
           packages:
+            - g++-7
             - clang-3.6
             - libstdc++-4.8-dev
-            - llvm-3.9-dev
-            - libclang-3.9-dev
+            - libclang-3.6-dev
             - libc++-dev
             - libc++abi-dev
       env:
@@ -91,18 +95,18 @@ matrix:
     - os: linux
       compiler: clang
       name: ubuntu 14.04 - clang@3.8
+      dist: trusty
       addons:
         apt:
           update: true
           sources:
-            - llvm-toolchain-precise-3.8
+            - ubuntu-toolchain-r-test
           packages:
             - clang-3.8
-            - libstdc++-4.8-dev
-            - llvm-3.9-dev
-            - libclang-3.9-dev
-            - libc++-dev
-            - libc++abi-dev
+            - g++-4.8-aarch64-linux-gnu
+            - gcc-4.8-aarch64-linux-gnu
+            - g++-4.8-multilib
+            - gcc-4.8-multilib
       env:
         - MATRIX_EVAL="CC=clang-3.8 && CXX=clang++-3.8"
         - CMAKE_C_COMPILER=${CC}
@@ -115,18 +119,18 @@ matrix:
     - os: linux
       compiler: clang
       name: ubuntu 14.04 - clang@3.9
+      dist: trusty
       addons:
         apt:
           update: true
           sources:
-            - llvm-toolchain-trusty-3.9
+            - ubuntu-toolchain-r-test
           packages:
             - clang-3.9
-            - libstdc++-4.8-dev
-            - llvm-3.9-dev
-            - libclang-3.9-dev
-            - libc++-dev
-            - libc++abi-dev
+            - g++-4.8-aarch64-linux-gnu
+            - gcc-4.8-aarch64-linux-gnu
+            - g++-4.8-multilib
+            - gcc-4.8-multilib
       env:
         - MATRIX_EVAL="CC=clang-3.9 && CXX=clang++-3.9"
         - CMAKE_C_COMPILER=${CC}
@@ -235,6 +239,13 @@ matrix:
       osx_image: xcode10.1
       compiler: clang
       name: macOS - native clang (llvm backend)
+      addons:
+        apt:
+          sources:
+            - llvm-toolchain-trusty-7
+          packages:
+            - libc++-dev
+            - libc++abi-dev
       env:
         - MATRIX_EVAL=""
         - COMPILER_ID="clang"

@@ -24,7 +24,7 @@ const char charset[] =
 const std :: size_t max_index_char_set = sizeof ( charset ) / sizeof ( char );
 
 
-class mystring : public Genome <char>
+class mystring : public Genome < char >
 {
 
 public:
